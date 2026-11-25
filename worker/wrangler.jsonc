@@ -1,0 +1,26 @@
+{
+	// ZeppBridge Cloud site: a Cloudflare Worker that only stores ciphertext.
+	// Change the two placeholders below, then run `npm run worker:deploy`.
+	// This file holds no secrets; keep it that way.
+	"$schema": "../node_modules/wrangler/config-schema.json",
+	"name": "zeppbridge-cloud",
+	"main": "src/index.js",
+	"compatibility_date": "2026-08-18",
+	"workers_dev": false,
+
+	// 1. Your own domain on Cloudflare. ZeppBridge expects https://health.<your domain>
+	//    when you only type the domain, so health.<your domain> is the easy choice.
+	"routes": [{ "pattern": "health.example.com", "custom_domain": true }],
+
+	// 2. Storage. Pick ONE of the two.
+	//    KV (works on the free plan):  npx wrangler kv namespace create zeppbridge-cloud
+	//    then paste the printed id here.
+	"kv_namespaces": [{ "binding": "STORE", "id": "<YOUR_KV_NAMESPACE_ID>" }],
+	//    R2 (if R2 is enabled on your account): delete `kv_namespaces` above, run
+	//    npx wrangler r2 bucket create zeppbridge-cloud, and uncomment this line.
+	//    The binding must be called BUCKET; uploader/keys.mjs reads the bucket name from here.
+	// "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "zeppbridge-cloud" }],
+
+	// Workers Logs record request headers, which carry your keys. Keep them off.
+	"observability": { "enabled": false }
+}
